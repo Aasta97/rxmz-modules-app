@@ -28,9 +28,9 @@ const Login = () => {
     await api
       .post("/auth/authenticate", { username, password })
       .then((response) => {
-        console.log(response);
         const { token } = response.data;
-
+        const { key_company } = response.data.user;
+        localStorage.setItem('key_company', key_company);
         login(token);
         
         navigate("/inicio");

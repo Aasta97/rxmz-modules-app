@@ -48,7 +48,6 @@ const ListReceipts = () => {
         await api
         .get(`/receipts/search/${searchBy}`)
         .then((response) => {
-            console.log(response.data.receipt);    
             setReceipts(response.data.receipt);
         })
         .catch((err) => {
@@ -106,7 +105,7 @@ const ListReceipts = () => {
                             <th>Código</th>
                             <th>Cliente</th>
                             <th>Nome</th>
-                            <th>Descrição</th>
+                            <th>Produtos</th>
                             <th>Data</th>
                             <th>Valor</th>
                             <th>Ação</th>
@@ -120,7 +119,7 @@ const ListReceipts = () => {
                                         <td>{receipt.code}</td>
                                         <td>{receipt.client}</td>
                                         <td>{receipt.name}</td>
-                                        <td>{receipt.description}</td>
+                                        <td>{receipt.products.map(x => x.name).join(', ')}</td>
                                         <td>{receipt.date}</td>
                                         <td>{receipt.value}</td>
                                         <td>

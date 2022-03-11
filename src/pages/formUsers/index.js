@@ -16,6 +16,7 @@ import api from "../../services/api";
 
 const FormUsers = (props) => {
     const [formData, setFormData] = useState({ 
+        key_company: localStorage.getItem('key_company'),
         name: "", 
         username: "", 
         password: "", 

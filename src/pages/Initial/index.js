@@ -6,6 +6,7 @@ import Menu from '../../components/Menu';
 import api from "../../services/api";
 
 const Initial = () => {
+  const [loaded, setLoaded] = useState(false);
   const [users, setUsers] = useState([]);
   const [receipts, setReceipts] = useState([]);
 
@@ -19,6 +20,7 @@ const Initial = () => {
     .get("/receipts/list")
     .then((response) => {         
         setReceipts(response.data.receipts);
+        setLoaded(true);
     })
     .catch((err) => {
       console.log(err.response.data.error);
@@ -39,16 +41,24 @@ const Initial = () => {
   return(
     <Container>
       <Menu />
-      <ContainerCards>
-        <CardUsers>
-          Quantidade de usuários
-          <h2>{users.length || 0}</h2>
-        </CardUsers>
-        <Card>
-          Quantidade de recibos
-          <h2>{receipts.length || 0}</h2>
-        </Card>
-      </ContainerCards>
+      
+        <ContainerCards>
+        {loaded ? 
+          <>
+            <CardUsers>
+              Quantidade de usuários
+              <h2>{users.length || 0}</h2>
+            </CardUsers>
+            <Card>
+              Quantidade de recibos
+              <h2>{receipts.length || 0}</h2>
+            </Card>
+          </>
+          :
+          <label>Carregando...</label>
+        }          
+        </ContainerCards>
+      
     </Container>
   );
 }

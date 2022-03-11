@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams  } from "react-router-dom";
+import { FaTrash, FaPlus } from 'react-icons/fa';
 import { FaFilePdf } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,17 +21,22 @@ import checklistPDF from '../../Reports/Receipts/checklist';
 
 const FormReceipts = (props) => {
     const [formData, setFormData] = useState({ 
+        key_company: localStorage.getItem('key_company'),
         code: "",
         name: "", 
-        description: "", 
         value: "",
         valueProduct: "", 
         qtd: "",
         date: "", 
         client: "",
         phone: "",
-        address: ""
+        address: "",
+        products: []
     });
+
+    const [products, setProducts] = useState([
+        { name:"", value: "", qtd: ""}
+    ]);
     
     const { id } = useParams();
     const navigate = useNavigate();   
@@ -43,14 +49,7 @@ const FormReceipts = (props) => {
     }, []);
 
     function handleInputChange(event) {
-        let { name, value } = event.target;
-        if(name === "value"){
-            value = formatReal(value);
-        }
-
-        if(name === "qtd" && value < 0){
-            value = 0;
-        }
+        let { name, value } = event.target;        
 
         if(name === "phone"){            
             value = formatPhone(value);
@@ -66,10 +65,6 @@ const FormReceipts = (props) => {
         let validForm = true;
         if(formData.name === ""){ 
             notifyWarn("O nome não pode ser vázio"); 
-            validForm = false;
-        }
-        if(formData.description === ""){ 
-            notifyWarn("A descrição não pode ser vázio"); 
             validForm = false;
         }
         if(formData.value === ""){ 
@@ -95,7 +90,6 @@ const FormReceipts = (props) => {
             const { 
                 code,
                 name, 
-                description, 
                 value,
                 valueProduct, 
                 qtd,
@@ -103,20 +97,21 @@ const FormReceipts = (props) => {
                 client,
                 phone,
                 address
-              } = response.data.receipt;
-
+            } = response.data.receipt;
+            
             setFormData({ 
-            code,
-            name, 
-            description, 
-            value,
-            valueProduct, 
-            qtd,
-            date, 
-            client,
-            phone,
-            address
+                code,
+                name, 
+                value,
+                valueProduct, 
+                qtd,
+                date, 
+                client,
+                phone,
+                address
             });
+
+            setProducts(response.data.receipt.products);
             //navigate('/usuarios/listar');
         })
         .catch((err) => {
@@ -146,6 +141,10 @@ const FormReceipts = (props) => {
 
     async function handleForm(event){
         event.preventDefault();
+
+        formData['products'] = products;
+        formData['value']    = formatReal(products.reduce((total, currentValue) => total = total + parseFloat(currentValue.value.replace('.', '').replace(',', '.')),0).toFixed(2));
+
         if(validateFields()){
             if(id !== undefined){
                 await api.put(`/receipts/change/${id}`, formData)
@@ -167,6 +166,37 @@ const FormReceipts = (props) => {
                 });
             }
         }        
+    }
+
+    function handleProductAdd(){
+        setProducts([...products, { name:"", value: "", qtd: ""}]);
+    }
+
+    function handleProductRemove(index){
+        const list = [...products];
+        list.splice(index, 1);
+        setProducts(list);
+    }
+
+    function handleProductChange(event, index){
+        let {name, value} = event.target;
+
+        if(name === "value"){
+            value = formatReal(value);
+        }
+
+        if(name === "qtd" && value < 0){
+            value = 0;
+        }
+
+        let list = [...products];
+        list[index][name] = value;
+        setProducts(list);
+        
+        setFormData({
+            ...formData,
+            value: value,
+        });
     }
 
     return(
@@ -235,38 +265,50 @@ const FormReceipts = (props) => {
                         </Col>                        
                     </Form.Group>
 
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">Descrição</Form.Label>
+                    {products.map((product, index) => (                        
+                            <Form.Group as={Row} className="mb-3" key={index}>
+                                <Form.Label column sm="2">Produto</Form.Label>
+                                <Col sm="4">
+                                    <Form.Control 
+                                        type="text" 
+                                        name="name" 
+                                        value={product.name}
+                                        onChange={(e) => handleProductChange(e, index)} />
+                                </Col> 
+                                <Form.Label column sm="1">Valor</Form.Label>
+                                <Col sm="2">
+                                    <Form.Control 
+                                    type="text" 
+                                    name="value" 
+                                    value={product.value}
+                                    onChange={(e) => handleProductChange(e, index)}
+                                    />
+                                </Col>
+                                <Form.Label column sm="1">Quantidade</Form.Label>
+                                <Col sm="1">
+                                    <Form.Control 
+                                        type="number" 
+                                        name="qtd" 
+                                        value={product.qtd}
+                                        onChange={(e) => handleProductChange(e, index)}
+                                        />
+                                </Col>
+                                <Col sm="1">
+                                    <Button variant="outline-danger" style={{width: "100%" }} onClick={() => handleProductRemove(index)} ><FaTrash /></Button> 
+                                </Col>   
+                            </Form.Group>                                              
+                    ))} 
+                    <Form.Group as={Row} className="mb-3">                                
+                        <Form.Label column sm="2"></Form.Label>
                         <Col sm="10">
-                            <Form.Control 
-                                as="textarea"
-                                name="description" 
-                                value={formData["description"]}
-                                onChange={handleInputChange} />
-                        </Col>
-                    </Form.Group>
-
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">Valor</Form.Label>
-                        <Col sm="3">
-                            <Form.Control 
-                                type="text" 
-                                name="value" 
-                                value={formData["value"]}
-                                onChange={handleInputChange}
-                                />
-                        </Col>
-                        <Form.Label column sm="1">Quantidade</Form.Label>
-                        <Col sm="2">
-                            <Form.Control 
-                                type="number" 
-                                name="qtd" 
-                                value={formData["qtd"]}
-                                onChange={handleInputChange}
-                                />
+                            <Button variant="outline-primary" onClick={handleProductAdd}><FaPlus /></Button> 
                         </Col>  
-                        <Form.Label column sm="1">Data</Form.Label>
-                        <Col sm="3">
+                    </Form.Group>  
+                    <br />                   
+
+                    <Form.Group as={Row} className="mb-3">                       
+                        <Form.Label column sm="2">Data do pedido</Form.Label>
+                        <Col sm="4">
                             <Form.Control 
                                 type="date" 
                                 name="date" 

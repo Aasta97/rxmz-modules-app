@@ -2,7 +2,7 @@ import axios from 'axios';
 const token = localStorage.getItem('token');
 
 const api = axios.create({
-    baseURL: 'http://localhost:3001',
+    baseURL: 'https://receipt-managemen-api-sxkynw6ufq-ue.a.run.app',
     headers: {'Authorization': `Bearer ${token}`}
 });
 
