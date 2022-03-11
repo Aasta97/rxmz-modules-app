@@ -35,7 +35,7 @@ const ListUsers = () => {
 
     async function getUsers(){
         await api
-        .get("/users/list")
+        .post("/users/list", {key_company: localStorage.getItem("key_company")})
         .then((response) => {         
             setUsers(response.data.users);
         })
@@ -46,7 +46,7 @@ const ListUsers = () => {
 
     async function handleSearchData(){
         await api
-        .get(`/users/search/${searchBy}`)
+        .post(`/users/search/${searchBy}`, {key_company: localStorage.getItem("key_company")})
         .then((response) => {    
             setUsers(response.data.users);
         })

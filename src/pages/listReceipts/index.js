@@ -35,7 +35,7 @@ const ListReceipts = () => {
 
     async function getReceipts(){
         await api
-        .get("/receipts/list")
+        .post("/receipts/list", {key_company: localStorage.getItem("key_company")})
         .then((response) => {         
             setReceipts(response.data.receipts);
         })
@@ -46,7 +46,7 @@ const ListReceipts = () => {
 
     async function handleSearchData(){
         await api
-        .get(`/receipts/search/${searchBy}`)
+        .post(`/receipts/search/${searchBy}`, {key_company: localStorage.getItem("key_company")})
         .then((response) => {
             setReceipts(response.data.receipt);
         })

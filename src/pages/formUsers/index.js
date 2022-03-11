@@ -69,7 +69,7 @@ const FormUsers = (props) => {
 
     async function getUserById(id){
         await api
-        .get(`/users/${id}`)
+        .post(`/users/${id}`, {key_company: localStorage.getItem("key_company")})
         .then((response) => {
             const { name, username, status } = response.data.user;
             setFormData({

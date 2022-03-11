@@ -17,7 +17,7 @@ const Initial = () => {
 
   async function getReceipts(){
     await api
-    .get("/receipts/list")
+    .post("/receipts/list", {key_company: localStorage.getItem("key_company")})
     .then((response) => {         
         setReceipts(response.data.receipts);
         setLoaded(true);
@@ -29,7 +29,7 @@ const Initial = () => {
 
   async function getUsers(){
     await api
-    .get("/users/list")
+    .post("/users/list", {key_company: localStorage.getItem("key_company")})
     .then((response) => {         
         setUsers(response.data.users);
     })

@@ -85,7 +85,7 @@ const FormReceipts = (props) => {
 
     async function getReceiptById(id){
         await api
-        .get(`/receipts/${id}`)
+        .post(`/receipts/${id}`, {key_company: localStorage.getItem("key_company")})
         .then((response) => {
             const { 
                 code,
