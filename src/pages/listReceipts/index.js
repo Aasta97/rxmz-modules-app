@@ -104,7 +104,6 @@ const ListReceipts = () => {
                         <tr>
                             <th>Código</th>
                             <th>Cliente</th>
-                            <th>Nome</th>
                             <th>Produtos</th>
                             <th>Data</th>
                             <th>Valor</th>
@@ -118,7 +117,6 @@ const ListReceipts = () => {
                                     <tr key={receipt._id}>
                                         <td>{receipt.code}</td>
                                         <td>{receipt.client}</td>
-                                        <td>{receipt.name}</td>
                                         <td>{receipt.products.map(x => x.name).join(', ')}</td>
                                         <td>{receipt.date}</td>
                                         <td>{receipt.value}</td>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import { useNavigate, useParams  } from "react-router-dom";
 import { FaTrash, FaPlus } from 'react-icons/fa';
 import { FaFilePdf } from 'react-icons/fa';
@@ -18,12 +19,12 @@ import api from "../../services/api";
 
 import receiptsPDF from '../../Reports/Receipts/receipts';
 import checklistPDF from '../../Reports/Receipts/checklist';
+import MyDocument from '../../Reports/Receipts/receipt';
 
 const FormReceipts = (props) => {
     const [formData, setFormData] = useState({ 
         key_company: localStorage.getItem('key_company'),
         code: "",
-        name: "", 
         value: "",
         valueProduct: "", 
         qtd: "",
@@ -63,10 +64,6 @@ const FormReceipts = (props) => {
 
     function validateFields(){
         let validForm = true;
-        if(formData.name === ""){ 
-            notifyWarn("O nome não pode ser vázio"); 
-            validForm = false;
-        }
         if(formData.value === ""){ 
             notifyWarn("O valor não pode ser vázio"); 
             validForm = false;
@@ -89,7 +86,6 @@ const FormReceipts = (props) => {
         .then((response) => {
             const { 
                 code,
-                name, 
                 value,
                 valueProduct, 
                 qtd,
@@ -100,8 +96,7 @@ const FormReceipts = (props) => {
             } = response.data.receipt;
             
             setFormData({ 
-                code,
-                name, 
+                code, 
                 value,
                 valueProduct, 
                 qtd,
@@ -199,7 +194,7 @@ const FormReceipts = (props) => {
         });
     }
 
-    return(
+    return(        
         <>
             <style type="text/css">
             {`
@@ -213,11 +208,12 @@ const FormReceipts = (props) => {
             <Container>
                 <h2>Cadastro de recibos</h2>
                 <hr />
-                {
+                {                    
                     id !== undefined && (
                         <>
-                            <Button type="submit" variant="danger" className="button" onClick={(e) => {receiptsPDF(formData)}} ><FaFilePdf /> Gerar PDF</Button>
-                            <Button type="submit" variant="primary" onClick={(e) => {checklistPDF(formData)}} ><FaFilePdf /> Gerar checklist</Button> 
+                            <PDFDownloadLink document={<MyDocument products={products} data={formData}/>} fileName="recibo.pdf">
+                                <FaFilePdf /> Gerar PDF
+                            </PDFDownloadLink>                        
                         </>
                     )
                 }
@@ -252,17 +248,6 @@ const FormReceipts = (props) => {
                                 value={formData["address"]}
                                 onChange={handleInputChange} />
                         </Col>
-                    </Form.Group>
-
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">identificação do recibo</Form.Label>
-                        <Col sm="10">
-                            <Form.Control 
-                                type="text" 
-                                name="name" 
-                                value={formData["name"]}
-                                onChange={handleInputChange} />
-                        </Col>                        
                     </Form.Group>
 
                     {products.map((product, index) => (                        
