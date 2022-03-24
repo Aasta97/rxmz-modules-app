@@ -33,7 +33,7 @@ const MyDocument = ({ data, products }) => (
                 display: "flex", 
                 flexDirection: "row", 
                 width:'90%',
-                height:'110px',
+                height:'120px',
                 padding:'20px 30px',
                 margin: '3px 15px',
                 border: '2px solid #333',
@@ -55,7 +55,7 @@ const MyDocument = ({ data, products }) => (
                 width:'90%',
                 height:'auto',
                 minHeight: '15%',
-                margin: '3px 15px',
+                margin: '3px 15px',                
                 border: '2px solid #333',
                 borderRadius: '5px'}}>
                 <View style={{width: '10%'}}>
@@ -70,13 +70,64 @@ const MyDocument = ({ data, products }) => (
                   {products.map((product) => (
                     <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '5px 10px'}}>{product.name}</Text>
                   ))}
-                </View>    
+                </View> 
                 <View style={{width: '20%'}}>
-                  <Text style={{flex: 1, border: '1px solid #333', padding: '5px 10px', backgroundColor: '#f9f9f9'}}>Valor</Text>
+                  <Text style={{flex: 1, border: '1px solid #333', padding: '5px 10px', backgroundColor: '#f9f9f9', fontSize: '14px'}}>Valor Unit.</Text>
                   {products.map((product) => (
-                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '5px 10px'}}>R$ {product.value}</Text>
+                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '5px 10px', fontSize: '14px' }}>R$ {(parseFloat(product.value.replace(',', '.'))/product.qtd).toFixed(2).toString().replace('.', ',')}</Text>
+                  ))}
+                </View>   
+                <View style={{width: '20%'}}>
+                  <Text style={{flex: 1, border: '1px solid #333', padding: '5px 10px', backgroundColor: '#f9f9f9', fontSize: '14px'}}>Valor</Text>
+                  {products.map((product) => (
+                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '5px 10px', fontSize: '14px' }}>R$ {product.value}</Text>
                   ))}
                 </View>      
+            </View>
+            <View style={{
+                display: "flex", 
+                flexDirection: "row", 
+                justifyContent: "space-between",
+                alignItems: "right",
+                width:'90%',
+                height:'auto',
+                minHeight: '15%',
+                margin: '0 15px 0 15px',                  
+                borderRadius: '5px'}}>
+                <View style={{width: '10px'}}></View>  
+            	  <View style={{width: '190px', textAlign: "right"}}>
+                  <Text style={{ flex: 1 }}>Valor Total: <Text style={{fontSize: '22px'}}>{data.value}</Text></Text>
+                </View> 
+            </View>
+            <View style={{
+                  display: "flex", 
+                  flexDirection: "row", 
+                  justifyContent: "space-between",
+                  alignItems: "right",
+                  width:'90%',
+                  height:'auto',
+                  minHeight: '15%',
+                  margin: '0 15px 0 15px',                  
+                  borderRadius: '5px'}}>
+                  <View style={{width: '170px', textAlign: "right", borderBottom: "1px solid black"}}></View>
+              	  <View style={{width: '170px', textAlign: "right", borderBottom: "1px solid black"}}></View> 
+            </View>
+            <View style={{
+              display: "flex", 
+              flexDirection: "row", 
+              justifyContent: "space-between",
+              alignItems: "right",
+              width:'90%',
+              height:'auto',
+              minHeight: '5%',
+              margin: '0 15px 0 15px',                  
+              borderRadius: '5px'}}>
+              <View style={{width: '170px', textAlign: "center" }}>
+                  <Text>Empresa</Text>	  
+              </View>
+              <View style={{width: '170px', textAlign: "center" }}>
+                  <Text>Cliente</Text>	  
+              </View> 
             </View>
         </Page>
     </Document>

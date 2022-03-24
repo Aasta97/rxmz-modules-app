@@ -17,9 +17,8 @@ import {
 import Menu from '../../components/Menu';
 import api from "../../services/api";
 
-import receiptsPDF from '../../Reports/Receipts/receipts';
-import checklistPDF from '../../Reports/Receipts/checklist';
 import MyDocument from '../../Reports/Receipts/receipt';
+import MyChecklist from '../../Reports/Receipts/checklist';
 
 const FormReceipts = (props) => {
     const [formData, setFormData] = useState({ 
@@ -211,9 +210,12 @@ const FormReceipts = (props) => {
                 {                    
                     id !== undefined && (
                         <>
-                            <PDFDownloadLink document={<MyDocument products={products} data={formData}/>} fileName="recibo.pdf">
+                            <PDFDownloadLink document={<MyDocument products={products} data={formData}/>} fileName={`recibo_${formData["code"].toString().padStart(4, "0")}.pdf`}>
                                 <FaFilePdf /> Gerar PDF
-                            </PDFDownloadLink>                        
+                            </PDFDownloadLink>   
+                            <PDFDownloadLink style={{ marginLeft: '20px', color: 'red' }} document={<MyChecklist products={products} data={formData}/>} fileName={`checklist_${formData["code"].toString().padStart(4, "0")}.pdf`}>
+                                <FaFilePdf /> Gerar Checklist
+                            </PDFDownloadLink>                           
                         </>
                     )
                 }

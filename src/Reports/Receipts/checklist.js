@@ -1,103 +1,79 @@
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
+import React from 'react';
+import { Document, Page, Text, View } from '@react-pdf/renderer';
 
-function dataFormatada(oldDate){
-    var data = new Date(oldDate),
-        dia  = data.getDate().toString(),
-        diaF = (dia.length === 1) ? '0'+dia : dia,
-        mes  = (data.getMonth()+1).toString(), //+1 pois no getMonth Janeiro começa com zero.
-        mesF = (mes.length === 1) ? '0'+mes : mes,
-        anoF = data.getFullYear();
-    return diaF+"/"+mesF+"/"+anoF;
+function formatStringData(data) {
+  var dia  = data.split("-")[2];
+  var mes  = data.split("-")[1];
+  var ano  = data.split("-")[0];
+
+  return ("0"+dia).slice(-2) + '/' + ("0"+mes).slice(-2) + '/' + ano;
 }
 
-function checklistPDF(receiptData) {
-    pdfMake.vfs = pdfFonts.pdfMake.vfs;
+const MyDocument = ({ data, products }) => (  
+    <Document>
+        <Page style={{margin: 20}}>
+          <View style={{
+                display: "flex", 
+                flexDirection: "row", 
+                width:'90%',
+                height:'150px',
+                padding:'5px 30px',
+                margin: '3px 15px',
+                border: '2px solid #333',
+                borderRadius: '5px'}}>
+                <View>
+                  <Text style={{margin: 8, fontSize: '25px'}}>PAULISTA <Text style={{fontSize: '18px'}}>Portões Automáticos e Esquadrias</Text></Text>
+                  <Text style={{margin: 8, fontSize: '18px'}}>Esquadrias de Mdeira, Chapa e Alumínio</Text>
+                  <Text style={{margin: 8, fontSize: '18px'}}>Aceitamos cartão</Text>
+                  <Text style={{margin: 8, fontSize: '18px'}}>Telefone: (11) 2727-2193 / 95357-7993</Text>
+                  <Text style={{margin: 8, fontSize: '18px'}}>Av. Rio das Pedras, 1013 - jd. Aricanduva - São Paulo - SP</Text>
+                </View>     
+            </View>
+            <View style={{
+                display: "flex", 
+                flexDirection: "row", 
+                width:'90%',
+                height:'110px',
+                padding:'20px 30px',
+                margin: '3px 15px',
+                border: '2px solid #333',
+                borderRadius: '5px'}}>
+                <View style={{flex: 1}}>
+                  <Text style={{flex: 1}}>Data: {formatStringData(data.date)}</Text>
+                  <Text style={{flex: 1}}>Nome: {data.client}</Text>
+                  <Text style={{flex: 1}}>Endereço: {data.address}</Text>
+                </View>
+                <View>
+                  <Text style={{flex: 1, color: 'red', fontSize: 23}}>{data.code.toString().padStart(4, "0")}</Text>
+                  <Text style={{flex: 1}}>{data.phone}</Text>
+                  <Text style={{flex: 1}}></Text>
+                </View>        
+            </View>
+            <View style={{
+                display: "flex", 
+                flexDirection: "row", 
+                width:'90%',
+                height:'auto',
+                minHeight: '15%',
+                margin: '3px 15px',
+                border: '2px solid #333',
+                borderRadius: '5px'}}>
+                <View style={{width: '20%'}}>
+                  <Text style={{flex: 1, border: '1px solid #333', padding: '5px 10px', backgroundColor: '#f9f9f9'}}>Qtd.</Text>
+                  {products.map((product) => (
+                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '5px 10px'}}>{product.qtd}</Text>
+                  ))}
+                  
+                </View>
+                <View style={{width: '80%'}}>
+                  <Text style={{flex: 1, border: '1px solid #333', padding: '5px 10px', backgroundColor: '#f9f9f9'}}>Produto</Text>
+                  {products.map((product) => (
+                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '5px 10px'}}>{product.name}</Text>
+                  ))}
+                </View>    
+            </View>
+        </Page>
+    </Document>
+);
 
-
-    const reportTitle = [{
-        text: 'Checklist',
-        alignment: 'center',
-        fontSize: 24,
-        bold: true,
-        margin: [15, 20, 0, 45]
-    }];
-
-    const details = [
-        {
-            style: 'tableExample',
-            color: '#444',
-            table: {
-                widths: ['auto', 223, 223],                
-                body: [
-                    [
-                        {text: 'Informações', style: 'tableHeader', colSpan: 3, alignment: 'center', fillColor: '#782b2b', color: '#fff'}, 
-                        {}, 
-                        {}
-                    ],
-                    [   
-                        {text: 'Identificação do recibo', style: 'tableHeader', alignment: 'center', colSpan: 3, fillColor: '#9f3232', color: '#fff'}, 
-                        {}, 
-                        {}
-                    ],
-                    [   
-                        {text: receiptData.name, style: 'tableHeader', alignment: 'center', colSpan: 3}, 
-                        {}, 
-                        {}
-                    ],
-                    [   
-                        {text: 'Código do recibo', style: 'tableHeader', alignment: 'left', fillColor: '#ad5f5f', color: '#fff'}, 
-                        {text: '000'.concat(receiptData.code), style: 'tableHeader', alignment: 'center', colSpan: 2}, 
-                        {}
-                    ],
-                    [   
-                        {text: 'Data do recibo', style: 'tableHeader', alignment: 'left', fillColor: '#ad5f5f', color: '#fff'}, 
-                        {text: dataFormatada(receiptData.date), style: 'tableHeader', alignment: 'center', colSpan: 2}, 
-                        {}
-                    ]
-                ]
-            }, 
-        },
-        {text: '', margin: [0, 20, 0, 0]},
-        {
-            style: 'tableExample',
-            color: '#444',
-            table: {
-                widths: ['auto', 230, 230],                   
-                headerRows: 2,
-                body: [                    
-                    [   
-                        {text: 'Descrição', style: 'tableHeader', alignment: 'center', colSpan: 3, fillColor: '#9f3232', color: '#fff'}, 
-                        {}, 
-                        {}
-                    ],
-                    [   
-                        {text: receiptData.description, style: 'tableHeader', alignment: 'center', colSpan: 3}, 
-                        {}, 
-                        {}
-                    ],                    
-                    [   
-                        {text: 'Quantidade', style: 'tableHeader', alignment: 'center', colSpan: 1, fillColor: '#ad5f5f', color: '#fff'}, 
-                        {text: receiptData.qtd, style: 'tableHeader', alignment: 'center', colSpan:2}, 
-                        {}
-                    ]
-                ]
-            }, 
-        }
-    ];
-
-    const rodape = [];
-
-    const docDefinitions = {
-        pageSize: 'A4',
-        pageMargins: [15, 50, 15, 40],
-
-        header: [reportTitle],
-        content: [details],
-        footer: [rodape],
-    };
-
-    pdfMake.createPdf(docDefinitions).download(`checklistRecibo_${receiptData.code}.pdf`);
-}
-
-export default checklistPDF;
+export default MyDocument;
