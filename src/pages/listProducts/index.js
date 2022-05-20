@@ -8,9 +8,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import Menu from '../../components/Menu';
 import api from "../../services/api";
 
-const ListUsers = () => {
-    const [users, setUsers] = useState([]);
-    const [searchBy, setSearchBy] = useState("");
+const ListProducts = () => {
+    const [products, setProducts] = useState([]);
+    const [searchBy, setSearchBy] = useState(1);
     
     const notifySucess = (message) => toast.success(message);
     const notifyWarn = (message) => toast.warn(message);
@@ -18,51 +18,53 @@ const ListUsers = () => {
     const navigate = useNavigate();
 
     useEffect( () =>{
-        const loadUsers = async () => {
+        const loadProducts = async () => {
             await api
-            .post("/users/list", {key_company: localStorage.getItem("key_company")})
+            .post("/products/list", {key_company: localStorage.getItem("key_company")})
             .then((response) => {         
-                setUsers(response.data.users);
+                setProducts(response.data.products);
             })
             .catch((err) => {
                 notifyWarn(err.response.data.error);
             });
         }
 
-        loadUsers();
+        loadProducts();
     }, []);
 
-    const getUsers = async () => {
+    const getProducts = async () => {
         await api
-        .post("/users/list", {key_company: localStorage.getItem("key_company")})
+        .post("/products/list", {key_company: localStorage.getItem("key_company")})
         .then((response) => {         
-            setUsers(response.data.users);
+            setProducts(response.data.products);
         })
         .catch((err) => {
             notifyWarn(err.response.data.error);
         });
     }
 
-    async function handleDeleteUser(id){
+    async function handleDeleteProduct(id){
         await api
-        .delete(`/users/delete/${id}`)
+        .delete(`/products/delete/${id}`)
         .then((response) => {         
-            notifySucess("Usuário removido!");
-            getUsers();
+            notifySucess("Produto removido!");
+            getProducts();
         })
         .catch((err) => {
             notifyWarn(err.response.data.error);
         });
     }
+
+    
 
     async function handleSearchData(){
         await api
-        .post(`/users/search/${searchBy}`, {key_company: localStorage.getItem("key_company")})
-        .then((response) => {    
-            setUsers(response.data.users);
+        .post(`/products/search/${searchBy}`, {key_company: localStorage.getItem("key_company")})
+        .then((response) => {
+            setProducts(response.data.product);
         })
         .catch((err) => {
-            notifyWarn("Usuário não encontrado!");
+            notifyWarn("Produto não encontrado!");
         });
     }
 
@@ -88,18 +90,18 @@ const ListUsers = () => {
             <ToastContainer /> 
             <Container>
                 <h1>
-                    Lista de usuários
+                    Lista de produtos
                 </h1>
                 <Form.Group as={Row} className="mb-1">
                     <Col sm="4">
                         <Col sm="6">
-                            <Button variant="primary" onClick={() => navigate('/usuarios/criar')}><FaPlus /> Novo usuário</Button> 
+                            <Button variant="primary" onClick={() => navigate('/produtos/criar')}><FaPlus /> Novo produto</Button> 
                         </Col>
                     </Col>
                     <Col sm="8">
                         <InputGroup className="mb-1">
                             <FormControl
-                                placeholder="Pesquisar por nome"
+                                placeholder="Pesquisar por código"
                                 name="searchBy"
                                 onChange={(e)=>setSearchBy(e.target.value)}
                             />
@@ -107,34 +109,37 @@ const ListUsers = () => {
                                 <FaSearch  /> Pesquisar
                             </Button>
                         </InputGroup>                       
-                    </Col>                    
+                    </Col>
+                    
                 </Form.Group>
                 <Table striped bordered hover>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Usuário</th>
+                            <th>Código</th>
+                            <th>Produto</th>
+                            <th>QTD.</th>
+                            <th>Valor</th>
                             <th>Ação</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user)=>(
-                            <tr key={user._id}>
-                                <td>{user._id}</td>
-                                <td>{user.name}</td>
-                                <td>{user.username}</td>
+                        {products.map((product)=>(
+                            <tr key={product._id}>
+                                <td>{product._id}</td>
+                                <td>{product.name}</td>
+                                <td>{product.qtd}</td>
+                                <td>{product.value}</td>    
                                 <td>
                                 <ButtonToolbar className="btn-group">
                                     <ButtonGroup className="me-2">
-                                        <Button variant="link" onClick={() => navigate(`/usuarios/editar/${user._id}`)}><FaEdit /></Button>
+                                        <Button variant="link" onClick={() => navigate(`/produtos/editar/${product._id}`)}><FaEdit /></Button>
                                     </ButtonGroup>
                                     <ButtonGroup>
-                                        <Button variant="link" className="delete" onClick={(e) => handleDeleteUser(user._id)}><FaTrash /></Button>
+                                        <Button variant="link" className="delete" onClick={(e) => handleDeleteProduct(product._id)}><FaTrash /></Button>
                                     </ButtonGroup>
                                 </ButtonToolbar>
                                 </td>
-                            </tr> 
+                            </tr>
                         ))}
                     </tbody>
                 </Table>
@@ -143,4 +148,4 @@ const ListUsers = () => {
     );
 }
 
-export default ListUsers;
+export default ListProducts;

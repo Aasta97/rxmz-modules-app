@@ -40,7 +40,17 @@ const Menu = () => {
               <NavDropdown.Item href="/usuarios/listar">Listar</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="/usuarios/criar">Criar</NavDropdown.Item>
-            </NavDropdown>           
+            </NavDropdown>   
+            <NavDropdown title="Clientes" id="collasible-nav-dropdown">
+              <NavDropdown.Item href="/clientes/listar">Listar</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item href="/clientes/criar">Criar</NavDropdown.Item>
+            </NavDropdown>  
+            <NavDropdown title="Produtos" id="collasible-nav-dropdown">
+              <NavDropdown.Item href="/produtos/listar">Listar</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item href="/produtos/criar">Criar</NavDropdown.Item>
+            </NavDropdown>        
             <NavDropdown title="Recibos" id="collasible-nav-dropdown">
               <NavDropdown.Item href="/recibos/listar">Listar</NavDropdown.Item>
               <NavDropdown.Divider />

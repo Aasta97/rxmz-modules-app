@@ -29,9 +29,28 @@ const FormUsers = (props) => {
 
     useEffect(()=>{
         if(id !== undefined){
+            const getUserById = async (id) => {
+                await api
+                .post(`/users/find/${id}`, {key_company: localStorage.getItem("key_company")})
+                .then((response) => {
+                    const { name, username, status } = response.data.user;
+                    setFormData({
+                        name, 
+                        username, 
+                        password: "", 
+                        confirmPassword: "", 
+                        status
+                    });
+                    //navigate('/usuarios/listar');
+                })
+                .catch((err) => {
+                    notifyWarn(err.response.data.error);
+                });      
+            }
+
             getUserById(id);
         }        
-    }, []);
+    }, [id]);
 
     function handleInputChange(event) {
         const { name, value } = event.target;
@@ -65,25 +84,6 @@ const FormUsers = (props) => {
         }
         
         return validForm;
-    }
-
-    async function getUserById(id){
-        await api
-        .post(`/users/${id}`, {key_company: localStorage.getItem("key_company")})
-        .then((response) => {
-            const { name, username, status } = response.data.user;
-            setFormData({
-                name, 
-                username, 
-                password: "", 
-                confirmPassword: "", 
-                status
-            });
-            //navigate('/usuarios/listar');
-        })
-        .catch((err) => {
-            notifyWarn(err.response.data.error);
-        });      
     }
 
     async function handleForm(event){

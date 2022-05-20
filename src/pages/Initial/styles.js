@@ -9,7 +9,7 @@ export const ContainerCards = styled.div`
 export const CardUsers = styled.div`
   width: 200px;
   height: 100px;
-  background-color: #4d4493;
+  background-color: #;
   border-radius: 3px;
   padding: 15px;
   color: #eee;
@@ -22,7 +22,7 @@ export const CardUsers = styled.div`
 export const Card = styled.div`
   width: 200px;
   height: 100px;
-  background-color: #934444;
+  background-color: ${props => props.color };
   border-radius: 3px;
   padding: 15px;
   color: #eee;

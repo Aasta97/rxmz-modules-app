@@ -14,6 +14,8 @@ import {
     ButtonGroup, 
     Button } from 'react-bootstrap';
 
+import {Suggestion} from './styles';
+
 import Menu from '../../components/Menu';
 import api from "../../services/api";
 
@@ -33,7 +35,11 @@ const FormReceipts = (props) => {
         address: "",
         products: []
     });
-
+    const [clients, setClients] = useState([]);
+    const [clientsSuggestions, setClientsSuggestions] = useState([]);
+    const [currentProduct, setCurrentProduct] = useState(0);
+    const [loadedProducts, setLoadedProducts] = useState([]);
+    const [productsSuggestions, setProductsSuggestions] = useState([]);
     const [products, setProducts] = useState([
         { name:"", value: "", qtd: ""}
     ]);
@@ -44,12 +50,86 @@ const FormReceipts = (props) => {
 
     useEffect(()=>{
         if(id !== undefined){
+            const getReceiptById = async (id) => {
+                await api
+                .post(`/receipts/find/${id}`, {key_company: localStorage.getItem("key_company")})
+                .then((response) => {
+                    const { 
+                        code,
+                        value,
+                        valueProduct, 
+                        qtd,
+                        date, 
+                        client,
+                        phone,
+                        address
+                    } = response.data.receipt;
+                    
+                    setFormData({ 
+                        code, 
+                        value,
+                        valueProduct, 
+                        qtd,
+                        date, 
+                        client,
+                        phone,
+                        address
+                    });
+        
+                    setProducts(response.data.receipt.products);
+                    //navigate('/usuarios/listar');
+                })
+                .catch((err) => {
+                    notifyWarn(err.response.data.error);
+                });      
+            }
+
             getReceiptById(id);
         }        
+    }, [id]);
+
+    useEffect(()=>{        
+        const loadClients = async () => {
+            await api
+            .post("/clients/list", {key_company: localStorage.getItem("key_company")})
+            .then((response) => {         
+                setClients(response.data.clients);
+            })
+            .catch((err) => {
+                notifyWarn(err.response.data.error);
+            });
+        }
+    
+        loadClients();  
+
+        const loadProducts = async () => {
+            await api
+            .post("/products/list", {key_company: localStorage.getItem("key_company")})
+            .then((response) => {         
+                setLoadedProducts(response.data.products);
+            })
+            .catch((err) => {
+                notifyWarn(err.response.data.error);
+            });
+        }
+
+        loadProducts();
+
     }, []);
 
     function handleInputChange(event) {
         let { name, value } = event.target;        
+        
+        if(name === "client"){ 
+            let matches = [];  
+            if(value.length > 0){
+                matches = clients.filter(client=>{
+                    const regex = new RegExp(`${value}`, "gi");
+                    return client.name.match(regex);
+                })
+            } 
+            setClientsSuggestions(matches.slice(0,5));        
+        }        
 
         if(name === "phone"){            
             value = formatPhone(value);
@@ -60,6 +140,24 @@ const FormReceipts = (props) => {
           [name]: value,
         });
     }
+
+    function handleSuggestion(e){
+        formData["client"] = e.name;
+        setClientsSuggestions([]);
+    }
+
+    function handleProductSuggestion(suggestion, index){
+        
+        let selectedProduct = {
+            'name': suggestion.name,
+            'value': suggestion.value,
+            'qtd': suggestion.qtd,
+        };
+        
+        products[index] = selectedProduct;
+        setProducts(products);        
+        setProductsSuggestions([]);
+    }    
 
     function validateFields(){
         let validForm = true;
@@ -77,40 +175,6 @@ const FormReceipts = (props) => {
         }
         
         return validForm;
-    }
-
-    async function getReceiptById(id){
-        await api
-        .post(`/receipts/${id}`, {key_company: localStorage.getItem("key_company")})
-        .then((response) => {
-            const { 
-                code,
-                value,
-                valueProduct, 
-                qtd,
-                date, 
-                client,
-                phone,
-                address
-            } = response.data.receipt;
-            
-            setFormData({ 
-                code, 
-                value,
-                valueProduct, 
-                qtd,
-                date, 
-                client,
-                phone,
-                address
-            });
-
-            setProducts(response.data.receipt.products);
-            //navigate('/usuarios/listar');
-        })
-        .catch((err) => {
-            notifyWarn(err.response.data.error);
-        });      
     }
 
     function formatReal(valor) {        
@@ -175,22 +239,37 @@ const FormReceipts = (props) => {
     function handleProductChange(event, index){
         let {name, value} = event.target;
 
+        setCurrentProduct(index);
+
         if(name === "value"){
             value = formatReal(value);
         }
 
-        if(name === "qtd" && value < 0){
+        if(name === "name"){ 
+            let matches = [];  
+            if(value.length > 0){
+                matches = loadedProducts.filter(product=>{
+                    const regex = new RegExp(`${value}`, "gi");
+                    return product.name.match(regex);
+                })
+            } 
+            setProductsSuggestions(matches.slice(0,5));     
+        }  
+
+        /*if(name === "qtd" && value < 0){
             value = 0;
         }
 
         let list = [...products];
         list[index][name] = value;
+
+        
         setProducts(list);
         
         setFormData({
             ...formData,
             value: value,
-        });
+        });*/
     }
 
     return(        
@@ -229,8 +308,10 @@ const FormReceipts = (props) => {
                                 type="text" 
                                 name="client" 
                                 value={formData["client"]}
-                                onChange={handleInputChange} />
+                                onChange={handleInputChange} 
+                                autoComplete="off" autoCorrect="off" />
                         </Col>
+                        
                         <Form.Label column sm="2">Telefone</Form.Label>
                         <Col sm="4">
                             <Form.Control 
@@ -238,6 +319,15 @@ const FormReceipts = (props) => {
                                 name="phone" 
                                 value={formData["phone"]}
                                 onChange={handleInputChange} />
+                        </Col>
+                    </Form.Group>
+
+                    <Form.Group as={Row} className="mb-3">
+                        <Form.Label column sm="2"></Form.Label>
+                        <Col sm="4" style={{marginTop:'-16px', borderRadius: '5px'}}>
+                            {clientsSuggestions && clientsSuggestions.map((sug, i) => 
+                                <Suggestion key={sug.name} onClick={()=>handleSuggestion(sug)}>{sug.name}</Suggestion>
+                            )}
                         </Col>
                     </Form.Group>
 
@@ -253,37 +343,50 @@ const FormReceipts = (props) => {
                     </Form.Group>
 
                     {products.map((product, index) => (                        
-                            <Form.Group as={Row} className="mb-3" key={index}>
-                                <Form.Label column sm="2">Produto</Form.Label>
-                                <Col sm="4">
-                                    <Form.Control 
+                            <div key={index}>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">Produto</Form.Label>
+                                    <Col sm="4">
+                                        <Form.Control 
+                                            type="text" 
+                                            name="name" 
+                                            value={product.name}
+                                            onChange={(e) => handleProductChange(e, index)} 
+                                            autoComplete="off" autoCorrect="off" />
+                                    </Col> 
+                                    <Form.Label column sm="1">Valor</Form.Label>
+                                    <Col sm="2">
+                                        <Form.Control 
                                         type="text" 
-                                        name="name" 
-                                        value={product.name}
-                                        onChange={(e) => handleProductChange(e, index)} />
-                                </Col> 
-                                <Form.Label column sm="1">Valor</Form.Label>
-                                <Col sm="2">
-                                    <Form.Control 
-                                    type="text" 
-                                    name="value" 
-                                    value={product.value}
-                                    onChange={(e) => handleProductChange(e, index)}
-                                    />
-                                </Col>
-                                <Form.Label column sm="1">Quantidade</Form.Label>
-                                <Col sm="1">
-                                    <Form.Control 
-                                        type="number" 
-                                        name="qtd" 
-                                        value={product.qtd}
+                                        name="value" 
+                                        value={product.value}
                                         onChange={(e) => handleProductChange(e, index)}
                                         />
-                                </Col>
-                                <Col sm="1">
-                                    <Button variant="outline-danger" style={{width: "100%" }} onClick={() => handleProductRemove(index)} ><FaTrash /></Button> 
-                                </Col>   
-                            </Form.Group>                                              
+                                    </Col>
+                                    <Form.Label column sm="1">Quantidade</Form.Label>
+                                    <Col sm="1">
+                                        <Form.Control 
+                                            type="number" 
+                                            name="qtd" 
+                                            value={product.qtd}
+                                            onChange={(e) => handleProductChange(e, index)}
+                                            />
+                                    </Col>
+                                    <Col sm="1">
+                                        <Button variant="outline-danger" style={{width: "100%" }} onClick={() => handleProductRemove(index)} ><FaTrash /></Button> 
+                                    </Col>   
+                                </Form.Group> 
+                                
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2"></Form.Label>
+                                    <Col sm="4" style={{marginTop:'-16px', borderRadius: '5px'}}>
+                                        {productsSuggestions && productsSuggestions.map( sug => (
+                                                index === currentProduct && <Suggestion key={sug.name} onClick={()=>handleProductSuggestion(sug, currentProduct)}>{sug.name}</Suggestion>
+                                            )                                            
+                                        )}
+                                    </Col>
+                                </Form.Group>
+                            </div>
                     ))} 
                     <Form.Group as={Row} className="mb-3">                                
                         <Form.Label column sm="2"></Form.Label>

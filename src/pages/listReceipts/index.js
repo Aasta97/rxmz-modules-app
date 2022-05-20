@@ -18,8 +18,30 @@ const ListReceipts = () => {
     const navigate = useNavigate();
 
     useEffect( () =>{
-        getReceipts();
+        const loadReceipts = async () => {
+            await api
+            .post("/receipts/list", {key_company: localStorage.getItem("key_company")})
+            .then((response) => {         
+                setReceipts(response.data.receipts);
+            })
+            .catch((err) => {
+                notifyWarn(err.response.data.error);
+            });
+        }
+
+        loadReceipts();
     }, []);
+
+    const getReceipts = async () => {
+        await api
+        .post("/receipts/list", {key_company: localStorage.getItem("key_company")})
+        .then((response) => {         
+            setReceipts(response.data.receipts);
+        })
+        .catch((err) => {
+            notifyWarn(err.response.data.error);
+        });
+    }
 
     async function handleDeleteReceipt(id){
         await api
@@ -27,17 +49,6 @@ const ListReceipts = () => {
         .then((response) => {         
             notifySucess("Recibo removido!");
             getReceipts();
-        })
-        .catch((err) => {
-            notifyWarn(err.response.data.error);
-        });
-    }
-
-    async function getReceipts(){
-        await api
-        .post("/receipts/list", {key_company: localStorage.getItem("key_company")})
-        .then((response) => {         
-            setReceipts(response.data.receipts);
         })
         .catch((err) => {
             notifyWarn(err.response.data.error);
@@ -111,29 +122,25 @@ const ListReceipts = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {receipts.map((receipt)=>{
-                            if(receipt !== null){
-                                return(
-                                    <tr key={receipt._id}>
-                                        <td>{receipt.code}</td>
-                                        <td>{receipt.client}</td>
-                                        <td>{receipt.products.map(x => x.name).join(', ')}</td>
-                                        <td>{receipt.date}</td>
-                                        <td>{receipt.value}</td>
-                                        <td>
-                                        <ButtonToolbar className="btn-group">
-                                            <ButtonGroup className="me-2">
-                                                <Button variant="link" onClick={() => navigate(`/recibos/editar/${receipt._id}`)}><FaEdit /></Button>
-                                            </ButtonGroup>
-                                            <ButtonGroup>
-                                                <Button variant="link" className="delete" onClick={(e) => handleDeleteReceipt(receipt._id)}><FaTrash /></Button>
-                                            </ButtonGroup>
-                                        </ButtonToolbar>
-                                        </td>
-                                    </tr>
-                                );
-                            }
-                        })}
+                        {receipts.map((receipt)=>(
+                            <tr key={receipt._id}>
+                            <td>{receipt.code}</td>
+                            <td>{receipt.client}</td>
+                            <td>{receipt.products.map(x => x.name).join(', ')}</td>
+                            <td>{receipt.date}</td>
+                            <td>{receipt.value}</td>
+                            <td>
+                            <ButtonToolbar className="btn-group">
+                                <ButtonGroup className="me-2">
+                                    <Button variant="link" onClick={() => navigate(`/recibos/editar/${receipt._id}`)}><FaEdit /></Button>
+                                </ButtonGroup>
+                                <ButtonGroup>
+                                    <Button variant="link" className="delete" onClick={(e) => handleDeleteReceipt(receipt._id)}><FaTrash /></Button>
+                                </ButtonGroup>
+                            </ButtonToolbar>
+                            </td>
+                        </tr>
+                        ))}
                     </tbody>
                 </Table>
             </Container>

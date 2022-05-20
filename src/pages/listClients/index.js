@@ -8,8 +8,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Menu from '../../components/Menu';
 import api from "../../services/api";
 
-const ListUsers = () => {
-    const [users, setUsers] = useState([]);
+const ListClients = () => {
+    const [clients, setClients] = useState([]);
     const [searchBy, setSearchBy] = useState("");
     
     const notifySucess = (message) => toast.success(message);
@@ -18,37 +18,37 @@ const ListUsers = () => {
     const navigate = useNavigate();
 
     useEffect( () =>{
-        const loadUsers = async () => {
+        const loadClients = async () => {
             await api
-            .post("/users/list", {key_company: localStorage.getItem("key_company")})
+            .post("/clients/list", {key_company: localStorage.getItem("key_company")})
             .then((response) => {         
-                setUsers(response.data.users);
+                setClients(response.data.clients);
             })
             .catch((err) => {
                 notifyWarn(err.response.data.error);
             });
         }
 
-        loadUsers();
+        loadClients();
     }, []);
 
-    const getUsers = async () => {
+    const getClients = async () => {
         await api
-        .post("/users/list", {key_company: localStorage.getItem("key_company")})
+        .post("/clients/list", {key_company: localStorage.getItem("key_company")})
         .then((response) => {         
-            setUsers(response.data.users);
+            setClients(response.data.clients);
         })
         .catch((err) => {
             notifyWarn(err.response.data.error);
         });
     }
 
-    async function handleDeleteUser(id){
+    async function handleDeleteClient(id){
         await api
-        .delete(`/users/delete/${id}`)
+        .delete(`/clients/delete/${id}`)
         .then((response) => {         
-            notifySucess("Usuário removido!");
-            getUsers();
+            notifySucess("Cliente removido!");
+            getClients();
         })
         .catch((err) => {
             notifyWarn(err.response.data.error);
@@ -57,12 +57,12 @@ const ListUsers = () => {
 
     async function handleSearchData(){
         await api
-        .post(`/users/search/${searchBy}`, {key_company: localStorage.getItem("key_company")})
+        .post(`/clients/search/${searchBy}`, {key_company: localStorage.getItem("key_company")})
         .then((response) => {    
-            setUsers(response.data.users);
+            setClients(response.data.clients);
         })
         .catch((err) => {
-            notifyWarn("Usuário não encontrado!");
+            notifyWarn("Cliente não encontrado!");
         });
     }
 
@@ -88,12 +88,12 @@ const ListUsers = () => {
             <ToastContainer /> 
             <Container>
                 <h1>
-                    Lista de usuários
+                    Lista de clientes
                 </h1>
                 <Form.Group as={Row} className="mb-1">
                     <Col sm="4">
                         <Col sm="6">
-                            <Button variant="primary" onClick={() => navigate('/usuarios/criar')}><FaPlus /> Novo usuário</Button> 
+                            <Button variant="primary" onClick={() => navigate('/clientes/criar')}><FaPlus /> Novo cliente</Button> 
                         </Col>
                     </Col>
                     <Col sm="8">
@@ -114,27 +114,27 @@ const ListUsers = () => {
                         <tr>
                             <th>ID</th>
                             <th>Nome</th>
-                            <th>Usuário</th>
+                            <th>Cliente</th>
                             <th>Ação</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user)=>(
-                            <tr key={user._id}>
-                                <td>{user._id}</td>
-                                <td>{user.name}</td>
-                                <td>{user.username}</td>
-                                <td>
-                                <ButtonToolbar className="btn-group">
-                                    <ButtonGroup className="me-2">
-                                        <Button variant="link" onClick={() => navigate(`/usuarios/editar/${user._id}`)}><FaEdit /></Button>
-                                    </ButtonGroup>
-                                    <ButtonGroup>
-                                        <Button variant="link" className="delete" onClick={(e) => handleDeleteUser(user._id)}><FaTrash /></Button>
-                                    </ButtonGroup>
-                                </ButtonToolbar>
-                                </td>
-                            </tr> 
+                        {clients.map((client)=>(
+                            <tr key={client._id}>
+                            <td>{client._id}</td>
+                            <td>{client.name}</td>
+                            <td>{client.username}</td>
+                            <td>
+                            <ButtonToolbar className="btn-group">
+                                <ButtonGroup className="me-2">
+                                    <Button variant="link" onClick={() => navigate(`/clientes/editar/${client._id}`)}><FaEdit /></Button>
+                                </ButtonGroup>
+                                <ButtonGroup>
+                                    <Button variant="link" className="delete" onClick={(e) => handleDeleteClient(client._id)}><FaTrash /></Button>
+                                </ButtonGroup>
+                            </ButtonToolbar>
+                            </td>
+                        </tr>
                         ))}
                     </tbody>
                 </Table>
@@ -143,4 +143,4 @@ const ListUsers = () => {
     );
 }
 
-export default ListUsers;
+export default ListClients;

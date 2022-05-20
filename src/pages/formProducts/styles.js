@@ -8,10 +8,3 @@ export const Container = styled.div`
   align-items: center;
 `;
 
-export const Suggestion = styled.div`
-  border: 1px solid #eee;
-  background-color: #fff;
-  cursor: pointer;
-  padding: 2px 5px;
-`;
-
