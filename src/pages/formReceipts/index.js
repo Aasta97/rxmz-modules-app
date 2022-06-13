@@ -31,8 +31,8 @@ const FormReceipts = (props) => {
         qtd: "",
         date: "", 
         client: "",
+        description: "",
         phone: "",
-        address: "",
         products: []
     });
     const [clients, setClients] = useState([]);
@@ -61,8 +61,8 @@ const FormReceipts = (props) => {
                         qtd,
                         date, 
                         client,
-                        phone,
-                        address
+                        description,
+                        phone
                     } = response.data.receipt;
                     
                     setFormData({ 
@@ -72,8 +72,8 @@ const FormReceipts = (props) => {
                         qtd,
                         date, 
                         client,
-                        phone,
-                        address
+                        description,
+                        phone
                     });
         
                     setProducts(response.data.receipt.products);
@@ -143,6 +143,7 @@ const FormReceipts = (props) => {
 
     function handleSuggestion(e){
         formData["client"] = e.name;
+        formData["phone"] = e.phone;
         setClientsSuggestions([]);
     }
 
@@ -151,7 +152,7 @@ const FormReceipts = (props) => {
         let selectedProduct = {
             'name': suggestion.name,
             'value': suggestion.value,
-            'qtd': suggestion.qtd,
+            'qtd': null,
         };
         
         products[index] = selectedProduct;
@@ -214,6 +215,14 @@ const FormReceipts = (props) => {
                 });
             } 
             else{
+                products.map(async (product, index)=>{
+                    let list = [...loadedProducts];
+
+                    list[index]['qtd'] = list[index]['qtd'] - product.qtd;
+
+                    await api.put("/products/change/:id", list[index]);
+                });
+
                 await api
                 .post("/receipts/create", formData)
                 .then((response) => {
@@ -256,20 +265,12 @@ const FormReceipts = (props) => {
             setProductsSuggestions(matches.slice(0,5));     
         }  
 
-        /*if(name === "qtd" && value < 0){
-            value = 0;
-        }
+        if(name === "qtd"){ 
+            let list = [...products];
 
-        let list = [...products];
-        list[index][name] = value;
-
-        
-        setProducts(list);
-        
-        setFormData({
-            ...formData,
-            value: value,
-        });*/
+            list[index]['qtd'] = parseInt(value);
+            setProducts(list);  
+        } 
     }
 
     return(        
@@ -331,22 +332,11 @@ const FormReceipts = (props) => {
                         </Col>
                     </Form.Group>
 
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">Endereço</Form.Label>
-                        <Col sm="10">
-                            <Form.Control 
-                                type="text" 
-                                name="address" 
-                                value={formData["address"]}
-                                onChange={handleInputChange} />
-                        </Col>
-                    </Form.Group>
-
                     {products.map((product, index) => (                        
                             <div key={index}>
                                 <Form.Group as={Row} className="mb-3">
                                     <Form.Label column sm="2">Produto</Form.Label>
-                                    <Col sm="4">
+                                    <Col sm="3">
                                         <Form.Control 
                                             type="text" 
                                             name="name" 
@@ -363,8 +353,8 @@ const FormReceipts = (props) => {
                                         onChange={(e) => handleProductChange(e, index)}
                                         />
                                     </Col>
-                                    <Form.Label column sm="1">Quantidade</Form.Label>
-                                    <Col sm="1">
+                                    <Form.Label column sm="1">QTD.</Form.Label>
+                                    <Col sm="2">
                                         <Form.Control 
                                             type="number" 
                                             name="qtd" 
@@ -406,7 +396,19 @@ const FormReceipts = (props) => {
                                 onChange={handleInputChange}
                                 />
                         </Col>                      
-                    </Form.Group>                    
+                    </Form.Group>   
+
+                    <Form.Group as={Row} className="mb-3">
+                        <Form.Label column sm="2">Descrição</Form.Label>
+                        <Col sm="10">
+                            <Form.Control 
+                                as="textarea"
+                                rows={3}
+                                name="description" 
+                                value={formData["description"]}
+                                onChange={handleInputChange} />
+                        </Col>
+                    </Form.Group>                 
 
                     <ButtonToolbar>
                         <ButtonGroup className="me-2">

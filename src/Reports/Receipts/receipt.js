@@ -16,37 +16,37 @@ const MyDocument = ({ data, products }) => (
                 display: "flex", 
                 flexDirection: "row", 
                 width:'90%',
-                height:'150px',
+                height:'80px',
                 padding:'5px 30px',
                 margin: '3px 15px',
                 border: '2px solid #333',
                 borderRadius: '5px'}}>
                 <View>
-                  <Text style={{margin: 8, fontSize: '25px'}}>PAULISTA <Text style={{fontSize: '18px'}}>Portões Automáticos e Esquadrias</Text></Text>
-                  <Text style={{margin: 8, fontSize: '18px'}}>Esquadrias de Mdeira, Chapa e Alumínio</Text>
-                  <Text style={{margin: 8, fontSize: '18px'}}>Aceitamos cartão</Text>
-                  <Text style={{margin: 8, fontSize: '18px'}}>Telefone: (11) 2727-2193 / 95357-7993</Text>
-                  <Text style={{margin: 8, fontSize: '18px'}}>Av. Rio das Pedras, 1013 - jd. Aricanduva - São Paulo - SP</Text>
+                  <Text style={{fontSize: '16px'}}>PAULISTA <Text style={{fontSize: '10px'}}>Portões Automáticos e Esquadrias</Text></Text>
+                  <Text style={{fontSize: '10px'}}>Esquadrias de Mdeira, Chapa e Alumínio</Text>
+                  <Text style={{fontSize: '10px'}}>Aceitamos cartão</Text>
+                  <Text style={{fontSize: '10px'}}>Telefone: (11) 2727-2193 / 95357-7993</Text>
+                  <Text style={{fontSize: '10px'}}>Av. Rio das Pedras, 1013 - jd. Aricanduva - São Paulo - SP</Text>
                 </View>     
             </View>
             <View style={{
                 display: "flex", 
                 flexDirection: "row", 
                 width:'90%',
-                height:'120px',
+                height:'70px',
                 padding:'20px 30px',
                 margin: '3px 15px',
                 border: '2px solid #333',
                 borderRadius: '5px'}}>
-                <View style={{flex: 1}}>
-                  <Text style={{flex: 1}}>Data: {formatStringData(data.date)}</Text>
-                  <Text style={{flex: 1}}>Nome: {data.client}</Text>
-                  <Text style={{flex: 1}}>Endereço: {data.address}</Text>
+                <View>
+                  <Text style={{fontSize: 10}}>Data: {formatStringData(data.date)}</Text>
+                  <Text style={{fontSize: 10}}>Nome: {data.client}</Text>
+                  <Text style={{fontSize: 10}}>Endereço: {data.address}</Text>
                 </View>
                 <View>
-                  <Text style={{flex: 1, color: 'red', fontSize: 23}}>{data.code.toString().padStart(4, "0")}</Text>
-                  <Text style={{flex: 1}}>{data.phone}</Text>
-                  <Text style={{flex: 1}}></Text>
+                  <Text style={{marginLeft: '90px',color: 'red', fontSize: 16}}>{data.code.toString().padStart(4, "0")}</Text>
+                  <Text style={{marginLeft: '90px',fontSize: 10}}>{data.phone}</Text>
+                  <Text style={{fontSize: 10}}></Text>
                 </View>        
             </View>
             <View style={{
@@ -59,28 +59,28 @@ const MyDocument = ({ data, products }) => (
                 border: '2px solid #333',
                 borderRadius: '5px'}}>
                 <View style={{width: '10%'}}>
-                  <Text style={{flex: 1, border: '1px solid #333', padding: '5px 10px', backgroundColor: '#f9f9f9'}}>Qtd.</Text>
+                  <Text style={{flex: 1, border: '1px solid #333', padding: '2px 5px', backgroundColor: '#f9f9f9'}}>Qtd.</Text>
                   {products.map((product) => (
-                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '5px 10px'}}>{product.qtd}</Text>
+                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '2px 5px'}}>{product.qtd}</Text>
                   ))}
                   
                 </View>
                 <View style={{width: '70%'}}>
-                  <Text style={{flex: 1, border: '1px solid #333', padding: '5px 10px', backgroundColor: '#f9f9f9'}}>Produto</Text>
+                  <Text style={{flex: 1, border: '1px solid #333', padding: '2px 5px', backgroundColor: '#f9f9f9'}}>Produto</Text>
                   {products.map((product) => (
-                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '5px 10px'}}>{product.name}</Text>
+                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '2px 5px', fontSize: '10px'}}>{product.name}</Text>
                   ))}
                 </View> 
                 <View style={{width: '20%'}}>
-                  <Text style={{flex: 1, border: '1px solid #333', padding: '5px 10px', backgroundColor: '#f9f9f9', fontSize: '14px'}}>Valor Unit.</Text>
+                  <Text style={{flex: 1, border: '1px solid #333', padding: '2px 5px', backgroundColor: '#f9f9f9', fontSize: '10px'}}>Valor Unit.</Text>
                   {products.map((product) => (
-                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '5px 10px', fontSize: '14px' }}>R$ {(parseFloat(product.value.replace(',', '.'))/product.qtd).toFixed(2).toString().replace('.', ',')}</Text>
+                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '2px 5px', fontSize: '10px' }}>R$ {(parseFloat(product.value.replace(',', '.'))/product.qtd).toFixed(2).toString().replace('.', ',')}</Text>
                   ))}
                 </View>   
                 <View style={{width: '20%'}}>
-                  <Text style={{flex: 1, border: '1px solid #333', padding: '5px 10px', backgroundColor: '#f9f9f9', fontSize: '14px'}}>Valor</Text>
+                  <Text style={{flex: 1, border: '1px solid #333', padding: '2px 5px', backgroundColor: '#f9f9f9', fontSize: '10px'}}>Valor</Text>
                   {products.map((product) => (
-                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '5px 10px', fontSize: '14px' }}>R$ {product.value}</Text>
+                    <Text key={product.name} style={{flex: 1, border: '1px solid #333', padding: '2px 5px', fontSize: '10px' }}>R$ {product.value}</Text>
                   ))}
                 </View>      
             </View>
@@ -96,7 +96,7 @@ const MyDocument = ({ data, products }) => (
                 borderRadius: '5px'}}>
                 <View style={{width: '10px'}}></View>  
             	  <View style={{width: '190px', textAlign: "right"}}>
-                  <Text style={{ flex: 1 }}>Valor Total: <Text style={{fontSize: '22px'}}>{data.value}</Text></Text>
+                  <Text style={{ flex: 1 }}>Valor Total: <Text style={{fontSize: '16px'}}>{data.value}</Text></Text>
                 </View> 
             </View>
             <View style={{

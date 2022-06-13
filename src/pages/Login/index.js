@@ -36,6 +36,7 @@ const Login = () => {
         navigate("/inicio");
       })
       .catch((err) => {
+        console.log(err);
         setMessage(err.response.data.error);
       });
   }

@@ -124,7 +124,7 @@ const ListProducts = () => {
                     </thead>
                     <tbody>
                         {products.map((product)=>(
-                            <tr key={product._id}>
+                            <tr key={product._id} style={product.qtd <= 0? {background: '#ef6571'}:{background: '#fff'}}>
                                 <td>{product._id}</td>
                                 <td>{product.name}</td>
                                 <td>{product.qtd}</td>

@@ -20,7 +20,8 @@ const FormClients = (props) => {
         name: "", 
         cpf_cnpj: "", 
         phone: "", 
-        email: ""
+        email: "",
+        address: ""
     });
     
     const { id } = useParams();
@@ -34,12 +35,13 @@ const FormClients = (props) => {
                 await api
                 .post(`/clients/find/${id}`, {key_company: localStorage.getItem("key_company")})
                 .then((response) => {
-                    const { name, cpf_cnpj, phone, email } = response.data.client;
+                    const { name, cpf_cnpj, phone, email, address } = response.data.client;
                     setFormData({
                         name, 
                         cpf_cnpj, 
                         phone, 
-                        email
+                        email,
+                        address
                     });
                 })
                 .catch((err) => {
@@ -155,6 +157,17 @@ const FormClients = (props) => {
                                 value={formData["email"]}
                                 onChange={handleInputChange}
                                 />
+                        </Col>
+                    </Form.Group>
+
+                    <Form.Group as={Row} className="mb-3">
+                        <Form.Label column sm="2">Endereço</Form.Label>
+                        <Col sm="10">
+                            <Form.Control 
+                                type="text" 
+                                name="address" 
+                                value={formData["address"]}
+                                onChange={handleInputChange} />
                         </Col>
                     </Form.Group>
 
