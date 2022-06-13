@@ -9,7 +9,7 @@ function formatStringData(data) {
   return ("0"+dia).slice(-2) + '/' + ("0"+mes).slice(-2) + '/' + ano;
 }
 
-const MyDocument = ({ data, products }) => (  
+const MyDocument = ({ data, products, company }) => (  
     <Document>
         <Page style={{margin: 20}}>
           <View style={{
@@ -22,11 +22,11 @@ const MyDocument = ({ data, products }) => (
                 border: '2px solid #333',
                 borderRadius: '5px'}}>
                 <View>
-                  <Text style={{fontSize: '16px'}}>PAULISTA <Text style={{fontSize: '10px'}}>Portões Automáticos e Esquadrias</Text></Text>
-                  <Text style={{fontSize: '10px'}}>Esquadrias de Mdeira, Chapa e Alumínio</Text>
+                  <Text style={{fontSize: '16px'}}>{company === '92d7b77a-9b19-4c16-8281-eaeaf47684f9' ? 'INOVAÇÃO ESQUADRIAS':'PAULISTA'} <Text style={{fontSize: '10px'}}>Portões Automáticos e Esquadrias</Text></Text>
+                  <Text style={{fontSize: '10px'}}>Esquadrias de Madeira, Chapa e Alumínio</Text>
                   <Text style={{fontSize: '10px'}}>Aceitamos cartão</Text>
-                  <Text style={{fontSize: '10px'}}>Telefone: (11) 2727-2193 / 95357-7993</Text>
-                  <Text style={{fontSize: '10px'}}>Av. Rio das Pedras, 1013 - jd. Aricanduva - São Paulo - SP</Text>
+                  <Text style={{fontSize: '10px'}}>{company === '92d7b77a-9b19-4c16-8281-eaeaf47684f9' ? 'Telefone: (11) 2011-6716 / 98357-5011':'Telefone: (11) 2727-2193 / 95357-7993'}</Text>
+                  <Text style={{fontSize: '10px'}}>{company === '92d7b77a-9b19-4c16-8281-eaeaf47684f9' ? 'Av. Mateo Bei, 234 - jd. Tietê - São Paulo - SP':'Av. Rio das Pedras, 1013 - jd. Aricanduva - São Paulo - SP'}</Text>
                 </View>     
             </View>
             <View style={{

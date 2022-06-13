@@ -29,7 +29,8 @@ const Menu = () => {
         <Container>
         <Navbar.Brand href="/inicio">
           <Col xs={6} md={4}>
-            <Image src="/logo.png" roundedCircle />
+            {localStorage.getItem("key_company") === '92d7b77a-9b19-4c16-8281-eaeaf47684f9' ? 'INOVAÇÃO ESQUADRIAS' : <Image src="/logo.png" roundedCircle />}
+            
           </Col>          
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />

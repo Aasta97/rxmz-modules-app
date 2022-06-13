@@ -290,10 +290,10 @@ const FormReceipts = (props) => {
                 {                    
                     id !== undefined && (
                         <>
-                            <PDFDownloadLink document={<MyDocument products={products} data={formData}/>} fileName={`recibo_${formData["code"].toString().padStart(4, "0")}.pdf`}>
+                            <PDFDownloadLink document={<MyDocument products={products} data={formData} company={localStorage.getItem('key_company')} />} fileName={`recibo_${formData["code"].toString().padStart(4, "0")}.pdf`}>
                                 <FaFilePdf /> Gerar PDF
                             </PDFDownloadLink>   
-                            <PDFDownloadLink style={{ marginLeft: '20px', color: 'red' }} document={<MyChecklist products={products} data={formData}/>} fileName={`checklist_${formData["code"].toString().padStart(4, "0")}.pdf`}>
+                            <PDFDownloadLink style={{ marginLeft: '20px', color: 'red' }} document={<MyChecklist products={products} data={formData} company={localStorage.getItem('key_company')} />} fileName={`checklist_${formData["code"].toString().padStart(4, "0")}.pdf`}>
                                 <FaFilePdf /> Gerar Checklist
                             </PDFDownloadLink>                           
                         </>
